@@ -63,44 +63,54 @@ export function Chatbot({ onTaskCreate }: ChatbotProps) {
     addMessage(message, false);
 
     try {
-      const task = await aiService.processNaturalLanguageCommand(message);
+      // Check if "create" is in the message (case-insensitive)
+      if (/create/i.test(message)) {
+        const task = await aiService.processNaturalLanguageCommand(message);
 
-      if (task) {
-        await onTaskCreate(task);
+        if (task) {
+          // Ask for confirmation before creating the task
+          addMessage(
+            `📝 I have prepared the following task:\n\nTitle: ${task.title}${
+              task.dueDate
+                ? `\nDue Date: ${new Date(task.dueDate).toLocaleDateString()}`
+                : ""
+            }${
+              task.description ? `\nDescription: ${task.description}` : ""
+            }\n\nWould you like me to create this task? Please respond with "yes" to confirm or "no" to cancel.`,
+            true
+          );
+
+          // Save the task in a state for confirmation
+          pendingTaskRef.current = task;
+          return;
+        }
+      }
+
+      // If "create" is not in the message or no task is identified
+      const suggestions = await aiService.generateTaskSuggestions(message);
+
+      if (suggestions.length > 0) {
+        const suggestionMessage = suggestions
+          .map(
+            (task) =>
+              `- ${task.title}${
+                task.dueDate
+                  ? ` (Due: ${new Date(task.dueDate).toLocaleDateString()})`
+                  : ""
+              }`
+          )
+          .join("\n");
+
         addMessage(
-          `✨ I've created a new task for you:\n\nTitle: ${task.title}${
-            task.dueDate
-              ? `\nDue Date: ${new Date(task.dueDate).toLocaleDateString()}`
-              : ""
-          }${task.description ? `\nDescription: ${task.description}` : ""}`,
+          `📋 Here are some task suggestions based on your input:\n\n${suggestionMessage}\n\nWould you like me to create any of these tasks for you? Just let me know which one!`,
           true
         );
       } else {
-        const suggestions = await aiService.generateTaskSuggestions(message);
-
-        if (suggestions.length > 0) {
-          const suggestionMessage = suggestions
-            .map(
-              (task) =>
-                `- ${task.title}${
-                  task.dueDate
-                    ? ` (Due: ${new Date(task.dueDate).toLocaleDateString()})`
-                    : ""
-                }`
-            )
-            .join("\n");
-
-          addMessage(
-            `📋 Here are some task suggestions based on your input:\n\n${suggestionMessage}\n\nWould you like me to create any of these tasks for you? Just let me know which one!`,
-            true
-          );
-        } else {
-          const summary = await aiService.summarizeTaskDescription(message);
-          addMessage(
-            `📝 Here's a concise summary of what you said:\n\n${summary}\n\nWould you like me to create a task based on this?`,
-            true
-          );
-        }
+        const summary = await aiService.summarizeTaskDescription(message);
+        addMessage(
+          `📝 Here's a concise summary of what you said:\n\n${summary}\n\nWould you like me to create a task based on this?`,
+          true
+        );
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -112,6 +122,55 @@ export function Chatbot({ onTaskCreate }: ChatbotProps) {
       setIsLoading(false);
     }
   };
+
+  // State to store a pending task for confirmation
+  const pendingTaskRef = useRef<CreateTaskInput | null>(null);
+
+  const handleConfirmation = async (message: string) => {
+    if (pendingTaskRef.current) {
+      if (/yes/i.test(message)) {
+        // User confirmed task creation
+        await onTaskCreate(pendingTaskRef.current);
+        addMessage(
+          `✨ Task successfully created:\n\nTitle: ${
+            pendingTaskRef.current.title
+          }${
+            pendingTaskRef.current.dueDate
+              ? `\nDue Date: ${new Date(
+                  pendingTaskRef.current.dueDate
+                ).toLocaleDateString()}`
+              : ""
+          }${
+            pendingTaskRef.current.description
+              ? `\nDescription: ${pendingTaskRef.current.description}`
+              : ""
+          }`,
+          true
+        );
+        pendingTaskRef.current = null;
+      } else if (/no/i.test(message)) {
+        // User declined task creation
+        addMessage("🚫 Task creation canceled.", true);
+        pendingTaskRef.current = null;
+      } else {
+        // Prompt again for valid confirmation
+        addMessage(
+          '❓ Please respond with "yes" to confirm or "no" to cancel the task creation.',
+          true
+        );
+      }
+    } else {
+      // No pending task, proceed normally
+      handleSendMessage(message);
+    }
+  };
+
+  // Update ChatInput to use handleConfirmation
+  <ChatInput
+    onSend={handleConfirmation}
+    disabled={isLoading}
+    placeholder="Type your message here..."
+  />;
 
   return (
     <div className="flex flex-col h-[600px] bg-white rounded-xl shadow-lg border border-gray-100">
@@ -152,7 +211,7 @@ export function Chatbot({ onTaskCreate }: ChatbotProps) {
 
       <div className="p-4 border-t bg-white rounded-b-xl">
         <ChatInput
-          onSend={handleSendMessage}
+          onSend={handleConfirmation}
           disabled={isLoading}
           placeholder="Type / to start chatting..."
         />

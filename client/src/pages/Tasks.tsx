@@ -108,152 +108,6 @@ export default function Tasks() {
     return task.status.toLowerCase() === filter;
   });
 
-  // return (
-  //   <div className="space-y-6">
-  //     <div className="flex justify-between items-center">
-  //       <h1 className="text-2xl font-bold text-gray-900">Tasks</h1>
-  //       {/* <Button onClick={() => setIsFormOpen(true)}>
-  //         <Plus className="h-4 w-4 mr-2" />
-  //         New Task
-  //       </Button> */}
-  //       <div className="flex gap-2">
-  //         <Button
-  //           onClick={() => setShowChatbot(!showChatbot)}
-  //           variant="outline"
-  //         >
-  //           {showChatbot ? "Hide Assistant" : "Show Assistant"}
-  //         </Button>
-  //         <Button onClick={() => setIsFormOpen(true)}>
-  //           <Plus className="h-4 w-4 mr-2" />
-  //           New Task
-  //         </Button>
-  //       </div>
-  //     </div>
-
-  //     <AITaskAssistant
-  //       onTaskCreate={async (task: CreateTaskInput) => {
-  //         await createMutation.mutateAsync(task);
-  //       }}
-  //     />
-
-  //     {isFormOpen && (
-  //       <div className="bg-white rounded-lg shadow p-6">
-  //         <TaskForm
-  //           task={selectedTask ?? undefined}
-  //           onSubmit={handleSubmit}
-  //           onCancel={() => {
-  //             setIsFormOpen(false);
-  //             setSelectedTask(null);
-  //           }}
-  //         />
-  //       </div>
-  //     )}
-
-  //     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-  //       {tasks.map((task) => (
-  //         <TaskCard
-  //           key={task.id}
-  //           task={task}
-  //           onEdit={handleEdit}
-  //           onDelete={handleDelete}
-  //           onSummarize={() => handleSummarize(task)} // Pass summarization handler
-  //           isSummarizing={summarizingTaskId === task.id} // Indicate summarizing status
-  //         />
-  //       ))}
-  //     </div>
-
-  //     {showChatbot && (
-  //       <div className="lg:col-span-1">
-  //         <Chatbot
-  //           onTaskCreate={async (task: CreateTaskInput) => {
-  //             await createMutation.mutateAsync(task);
-  //           }}
-  //         />
-  //       </div>
-  //     )}
-  //   </div>
-  // );
-
-  // return (
-  //   <div className="space-y-6">
-  //     <div className="flex justify-between items-center">
-  //       <h1 className="text-2xl font-bold text-gray-900">Tasks</h1>
-  //       <div className="flex gap-2">
-  //         <Button
-  //           onClick={() => setShowChatbot(!showChatbot)}
-  //           variant="outline"
-  //           className="gap-2"
-  //         >
-  //           <MessageSquare className="h-4 w-4" />
-  //           {showChatbot ? "Hide Assistant" : "Show Assistant"}
-  //         </Button>
-  //         <Button onClick={() => setIsFormOpen(true)} className="gap-2">
-  //           <Plus className="h-4 w-4" />
-  //           New Task
-  //         </Button>
-  //       </div>
-  //     </div>
-
-  //     <div className="grid gap-6 lg:grid-cols-3">
-  //       <div
-  //         className={`space-y-6 ${
-  //           showChatbot ? "lg:col-span-2" : "lg:col-span-3"
-  //         }`}
-  //       >
-  //         <AITaskAssistant
-  //           onTaskCreate={async (task: CreateTaskInput) => {
-  //             await createMutation.mutateAsync(task);
-  //           }}
-  //         />
-
-  //         {isFormOpen && (
-  //           <div className="bg-white rounded-lg shadow-lg p-6">
-  //             <TaskForm
-  //               task={selectedTask ?? undefined}
-  //               onSubmit={handleSubmit}
-  //               onCancel={() => {
-  //                 setIsFormOpen(false);
-  //                 setSelectedTask(null);
-  //               }}
-  //             />
-  //           </div>
-  //         )}
-
-  //         <div className="grid gap-4 sm:grid-cols-2">
-  //           {tasks.map((task) => (
-  //             <TaskCard
-  //               key={task.id}
-  //               task={task}
-  //               onEdit={handleEdit}
-  //               onDelete={handleDelete}
-  //               onSummarize={() => handleSummarize(task)} // Pass summarization handler
-  //               isSummarizing={summarizingTaskId === task.id} // Indicate summarizing status
-  //             />
-  //           ))}
-  //           {tasks.length === 0 && (
-  //             <div className="sm:col-span-2 bg-gray-50 rounded-lg p-8 text-center">
-  //               <p className="text-gray-600">
-  //                 No tasks yet. Create one to get started!
-  //               </p>
-  //             </div>
-  //           )}
-  //         </div>
-  //       </div>
-
-  //       {showChatbot && (
-  //         <div className="lg:col-span-1 relative">
-  //           <div className="lg:sticky lg:top-6">
-  //             <Chatbot
-  //               onTaskCreate={async (task: CreateTaskInput) => {
-  //                 await createMutation.mutateAsync(task);
-  //               }}
-  //             />
-  //           </div>
-  //         </div>
-  //       )}
-  //     </div>
-  //   </div>
-  // );
   return (
     <div className="flex h-[calc(100vh-4rem)]">
       <div
@@ -262,88 +116,94 @@ export default function Tasks() {
         }`}
       >
         <div className="max-w-7xl mx-auto space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Tasks</h1>
-              <p className="mt-1 text-sm text-gray-500">
-                Manage and organize your tasks efficiently
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center bg-white rounded-lg shadow-sm border border-gray-200 p-1">
-                <Button
-                  variant={filter === "all" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setFilter("all")}
-                  className="text-sm"
-                >
-                  All
-                </Button>
-                <Button
-                  variant={filter === "pending" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setFilter("pending")}
-                  className="text-sm"
-                >
-                  Pending
-                </Button>
-                <Button
-                  variant={filter === "in_progress" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setFilter("in_progress")}
-                  className="text-sm"
-                >
-                  In Progress
-                </Button>
-                <Button
-                  variant={filter === "completed" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setFilter("completed")}
-                  className="text-sm"
-                >
-                  Completed
-                </Button>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setView(view === "grid" ? "list" : "grid")}
-                  className="h-9 w-9"
-                >
-                  {view === "grid" ? (
-                    <List className="h-4 w-4" />
-                  ) : (
-                    <LayoutGrid className="h-4 w-4" />
-                  )}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowChatbot(!showChatbot)}
-                  className="gap-2"
-                >
-                  <MessageSquare className="h-4 w-4" />
-                  {showChatbot ? "Hide Assistant" : "Show Assistant"}
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => setIsFormOpen(true)}
-                  className="gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  New Task
-                </Button>
-              </div>
-            </div>
+          {/* Header Section */}
+          <div className="w-full">
+            <h1 className="text-2xl font-bold text-gray-900">Tasks</h1>
+            <p className="mt-1 text-sm text-gray-500">
+              Manage and organize your tasks efficiently
+            </p>
           </div>
 
-          <AITaskAssistant
-            onTaskCreate={async (task: CreateTaskInput) => {
-              await createMutation.mutateAsync(task);
-            }}
-          />
+          {/* Controls and AITaskAssistant Section */}
+          <div className="flex items-center justify-between gap-4">
+            {/* Filter Buttons */}
+            <div className="flex items-center bg-white rounded-lg shadow-sm border border-gray-200 p-1">
+              <Button
+                variant={filter === "all" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setFilter("all")}
+                className="text-sm"
+              >
+                All
+              </Button>
+              <Button
+                variant={filter === "pending" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setFilter("pending")}
+                className="text-sm"
+              >
+                Pending
+              </Button>
+              <Button
+                variant={filter === "in_progress" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setFilter("in_progress")}
+                className="text-sm"
+              >
+                In Progress
+              </Button>
+              <Button
+                variant={filter === "completed" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setFilter("completed")}
+                className="text-sm"
+              >
+                Completed
+              </Button>
+            </div>
 
+            {/* View Toggle and Other Buttons */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setView(view === "grid" ? "list" : "grid")}
+                className="h-9 w-9"
+              >
+                {view === "grid" ? (
+                  <List className="h-4 w-4" />
+                ) : (
+                  <LayoutGrid className="h-4 w-4" />
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowChatbot(!showChatbot)}
+                className="gap-2"
+              >
+                <MessageSquare className="h-4 w-4" />
+                {showChatbot ? "Hide Assistant" : "Show Assistant"}
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => setIsFormOpen(true)}
+                className="gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                New Task
+              </Button>
+            </div>
+
+            {/* AITaskAssistant */}
+            {/* <AITaskAssistant
+              onTaskCreate={async (task: CreateTaskInput) => {
+                await createMutation.mutateAsync(task);
+              }}
+            /> */}
+          </div>
+
+          {/* Task Form */}
           {isFormOpen && (
             <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
               <TaskForm
@@ -357,6 +217,7 @@ export default function Tasks() {
             </div>
           )}
 
+          {/* Task Cards */}
           <div
             className={`grid gap-4 ${
               view === "grid"
@@ -370,6 +231,8 @@ export default function Tasks() {
                 task={task}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                onSummarize={() => handleSummarize(task)}
+                isSummarizing={summarizingTaskId === task.id}
                 view={view}
               />
             ))}
@@ -386,6 +249,7 @@ export default function Tasks() {
         </div>
       </div>
 
+      {/* Chatbot */}
       {showChatbot && (
         <div className="fixed right-0 top-16 bottom-0 w-[400px] border-l border-gray-200 bg-white shadow-lg">
           <Chatbot
