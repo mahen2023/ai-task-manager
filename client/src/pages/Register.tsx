@@ -33,17 +33,29 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 py-12 px-4 sm:px-6 lg:px-8">
+      {/* Website title */}
+      <header className="mb-10">
+        <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight">
+          TaskMaster Pro
+        </h1>
+        <p className="mt-2 text-gray-600 text-center">
+          Start managing your tasks effortlessly.
+        </p>
+      </header>
+
+      {/* Register card */}
+      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-semibold text-center text-gray-900">
+          Create your account
+        </h2>
+        <p className="mt-2 text-center text-gray-500 text-sm">
+          Sign up to start organizing your tasks today.
+        </p>
+        <form className="mt-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <p className="text-sm text-red-700">{error}</p>
+            <div className="rounded-md bg-red-100 p-4 text-red-700">
+              <p className="text-sm">{error}</p>
             </div>
           )}
           <div className="space-y-4">
@@ -71,9 +83,22 @@ export default function Register() {
               })}
             />
           </div>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            className="w-full bg-indigo-600 text-white hover:bg-indigo-700"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Creating account..." : "Create account"}
           </Button>
+          <div className="text-sm text-center mt-4">
+            Already have an account?{" "}
+            <a
+              href="/login"
+              className="text-indigo-600 hover:text-indigo-800 font-medium"
+            >
+              Sign in
+            </a>
+          </div>
         </form>
       </div>
     </div>
