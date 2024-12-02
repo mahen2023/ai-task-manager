@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Task, CreateTaskInput } from "../types/task";
 import { aiService } from "../services/ai";
+import { Modal } from "../components/ui/Modal";
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
@@ -141,7 +142,7 @@ export default function Dashboard() {
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
           Recent Tasks
         </h2>
-        {isFormOpen && (
+        {/* {isFormOpen && (
           <div className="bg-white rounded-lg shadow p-6">
             <TaskForm
               task={selectedTask ?? undefined}
@@ -152,7 +153,34 @@ export default function Dashboard() {
               }}
             />
           </div>
-        )}
+        )} */}
+        <Modal isOpen={isFormOpen} onClose={() => setIsFormOpen(false)}>
+          <div className="space-y-4">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b pb-2">
+              <h2 className="text-lg font-semibold text-gray-800">
+                {selectedTask ? "Edit Task" : "New Task"}
+              </h2>
+              {/* <button
+                  className="text-gray-500 hover:text-gray-800"
+                  onClick={() => setIsFormOpen(false)}
+                  aria-label="Close"
+                >
+                  ×
+                </button> */}
+            </div>
+
+            {/* Task Form */}
+            <TaskForm
+              task={selectedTask ?? undefined}
+              onSubmit={handleSubmit}
+              onCancel={() => {
+                setIsFormOpen(false);
+                setSelectedTask(null);
+              }}
+            />
+          </div>
+        </Modal>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {recentTasks.map((task) => (
             <TaskCard

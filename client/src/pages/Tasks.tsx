@@ -9,8 +9,10 @@ import { taskService } from "../services/task";
 import { aiService } from "../services/ai"; // Import the AI service
 import type { Task, CreateTaskInput } from "../types/task";
 import { useAuthStore } from "../stores/auth";
-
 import { Chatbot } from "../components/ai/Chatbot";
+
+// Import your modal component
+import { Modal } from "../components/ui/Modal";
 
 export default function Tasks() {
   const queryClient = useQueryClient();
@@ -18,7 +20,7 @@ export default function Tasks() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [summarizingTaskId, setSummarizingTaskId] = useState<string | null>(
     null
-  ); // Track task being summarized
+  );
   const { user } = useAuthStore();
   const userId = user?.id;
   const [showChatbot, setShowChatbot] = useState(false);
@@ -59,9 +61,9 @@ export default function Tasks() {
   const handleSubmit = async (data: CreateTaskInput) => {
     if (!userId) {
       console.error("User ID is not available.");
-      return; // Prevent submission if user ID is missing
+      return;
     }
-    const taskData = { ...data, userId }; // Add userId to the task data
+    const taskData = { ...data, userId };
 
     if (selectedTask) {
       await updateMutation.mutateAsync({ id: selectedTask.id, ...data });
@@ -83,7 +85,7 @@ export default function Tasks() {
 
   const handleSummarize = async (task: Task) => {
     try {
-      setSummarizingTaskId(task.id); // Indicate the task being summarized
+      setSummarizingTaskId(task.id);
       if (!task.description) {
         throw new Error("Task description is undefined.");
       }
@@ -95,7 +97,7 @@ export default function Tasks() {
       console.error("Error summarizing task description:", error);
       alert("Failed to summarize the task description. Please try again.");
     } finally {
-      setSummarizingTaskId(null); // Reset after summarizing
+      setSummarizingTaskId(null);
     }
   };
 
@@ -116,7 +118,6 @@ export default function Tasks() {
         }`}
       >
         <div className="max-w-7xl mx-auto space-y-6">
-          {/* Header Section */}
           <div className="w-full">
             <h1 className="text-2xl font-bold text-gray-900">Tasks</h1>
             <p className="mt-1 text-sm text-gray-500">
@@ -124,9 +125,7 @@ export default function Tasks() {
             </p>
           </div>
 
-          {/* Controls and AITaskAssistant Section */}
           <div className="flex items-center justify-between gap-4">
-            {/* Filter Buttons */}
             <div className="flex items-center bg-white rounded-lg shadow-sm border border-gray-200 p-1">
               <Button
                 variant={filter === "all" ? "default" : "ghost"}
@@ -162,7 +161,6 @@ export default function Tasks() {
               </Button>
             </div>
 
-            {/* View Toggle and Other Buttons */}
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -194,18 +192,25 @@ export default function Tasks() {
                 New Task
               </Button>
             </div>
-
-            {/* AITaskAssistant */}
-            {/* <AITaskAssistant
-              onTaskCreate={async (task: CreateTaskInput) => {
-                await createMutation.mutateAsync(task);
-              }}
-            /> */}
           </div>
 
-          {/* Task Form */}
-          {isFormOpen && (
-            <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+          <Modal isOpen={isFormOpen} onClose={() => setIsFormOpen(false)}>
+            <div className="space-y-4">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between border-b pb-2">
+                <h2 className="text-lg font-semibold text-gray-800">
+                  {selectedTask ? "Edit Task" : "New Task"}
+                </h2>
+                {/* <button
+                  className="text-gray-500 hover:text-gray-800"
+                  onClick={() => setIsFormOpen(false)}
+                  aria-label="Close"
+                >
+                  ×
+                </button> */}
+              </div>
+
+              {/* Task Form */}
               <TaskForm
                 task={selectedTask ?? undefined}
                 onSubmit={handleSubmit}
@@ -215,9 +220,8 @@ export default function Tasks() {
                 }}
               />
             </div>
-          )}
+          </Modal>
 
-          {/* Task Cards */}
           <div
             className={`grid gap-4 ${
               view === "grid"
@@ -249,7 +253,6 @@ export default function Tasks() {
         </div>
       </div>
 
-      {/* Chatbot */}
       {showChatbot && (
         <div className="fixed right-0 top-16 bottom-0 w-[400px] border-l border-gray-200 bg-white shadow-lg">
           <Chatbot

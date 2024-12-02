@@ -14,6 +14,7 @@ export interface CreateTaskInput {
   description?: string;
   dueDate?: string;
   status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+  userId: string;
 }
 
 export interface UpdateTaskInput extends Partial<CreateTaskInput> {
