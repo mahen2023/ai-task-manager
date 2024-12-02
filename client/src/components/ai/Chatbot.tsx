@@ -22,7 +22,7 @@ const INITIAL_MESSAGE = `👋 Hello! I'm your AI task assistant. I can help you:
 - Generate task suggestions
 - Summarize task descriptions
 
-Try saying something like "Create a task to review the project proposal by next Friday" or "Suggest some tasks for improving team communication".`;
+Try saying something like "Create a task to review the project proposal by next Friday", "Suggest some tasks for improving team communication", or "Summarize this: <text>".`;
 
 export function Chatbot({ onTaskCreate }: ChatbotProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -36,6 +36,7 @@ export function Chatbot({ onTaskCreate }: ChatbotProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const pendingTaskRef = useRef<CreateTaskInput | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -63,12 +64,10 @@ export function Chatbot({ onTaskCreate }: ChatbotProps) {
     addMessage(message, false);
 
     try {
-      // Check if "create" is in the message (case-insensitive)
       if (/create/i.test(message)) {
         const task = await aiService.processNaturalLanguageCommand(message);
 
         if (task) {
-          // Ask for confirmation before creating the task
           addMessage(
             `📝 I have prepared the following task:\n\nTitle: ${task.title}${
               task.dueDate
@@ -80,13 +79,29 @@ export function Chatbot({ onTaskCreate }: ChatbotProps) {
             true
           );
 
-          // Save the task in a state for confirmation
           pendingTaskRef.current = task;
           return;
         }
+      } else if (/summarize/i.test(message)) {
+        const textToSummarize = message.replace(/summarize:/i, "").trim();
+        if (textToSummarize.length === 0) {
+          addMessage(
+            "❓ Please provide some text after 'Summarize:' for me to summarize.",
+            true
+          );
+          return;
+        }
+
+        const summary = await aiService.summarizeTaskDescription(
+          textToSummarize
+        );
+        addMessage(
+          `📋 Here's the summary:\n\n${summary}\n\nWould you like me to create a task based on this?`,
+          true
+        );
+        return;
       }
 
-      // If "create" is not in the message or no task is identified
       const suggestions = await aiService.generateTaskSuggestions(message);
 
       if (suggestions.length > 0) {
@@ -123,13 +138,9 @@ export function Chatbot({ onTaskCreate }: ChatbotProps) {
     }
   };
 
-  // State to store a pending task for confirmation
-  const pendingTaskRef = useRef<CreateTaskInput | null>(null);
-
   const handleConfirmation = async (message: string) => {
     if (pendingTaskRef.current) {
       if (/yes/i.test(message)) {
-        // User confirmed task creation
         await onTaskCreate(pendingTaskRef.current);
         addMessage(
           `✨ Task successfully created:\n\nTitle: ${
@@ -149,28 +160,18 @@ export function Chatbot({ onTaskCreate }: ChatbotProps) {
         );
         pendingTaskRef.current = null;
       } else if (/no/i.test(message)) {
-        // User declined task creation
         addMessage("🚫 Task creation canceled.", true);
         pendingTaskRef.current = null;
       } else {
-        // Prompt again for valid confirmation
         addMessage(
           '❓ Please respond with "yes" to confirm or "no" to cancel the task creation.',
           true
         );
       }
     } else {
-      // No pending task, proceed normally
       handleSendMessage(message);
     }
   };
-
-  // Update ChatInput to use handleConfirmation
-  <ChatInput
-    onSend={handleConfirmation}
-    disabled={isLoading}
-    placeholder="Type your message here..."
-  />;
 
   return (
     <div className="flex flex-col h-[600px] bg-white rounded-xl shadow-lg border border-gray-100">
