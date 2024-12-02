@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { authService } from '../services/auth';
-import { useAuthStore } from '../stores/auth';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import { authService } from "../services/auth";
+import { useAuthStore } from "../stores/auth";
 
 interface RegisterForm {
   name: string;
@@ -15,7 +15,7 @@ interface RegisterForm {
 export default function Register() {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const {
     register,
     handleSubmit,
@@ -26,9 +26,9 @@ export default function Register() {
     try {
       const response = await authService.register(data);
       login(response.token, response.user);
-      navigate('/');
+      navigate("/");
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError("Registration failed. Please try again.");
     }
   };
 
@@ -50,33 +50,29 @@ export default function Register() {
             <Input
               placeholder="Full name"
               error={errors.name?.message}
-              {...register('name', { required: 'Name is required' })}
+              {...register("name", { required: "Name is required" })}
             />
             <Input
               type="email"
               placeholder="Email address"
               error={errors.email?.message}
-              {...register('email', { required: 'Email is required' })}
+              {...register("email", { required: "Email is required" })}
             />
             <Input
               type="password"
               placeholder="Password"
               error={errors.password?.message}
-              {...register('password', {
-                required: 'Password is required',
+              {...register("password", {
+                required: "Password is required",
                 minLength: {
                   value: 6,
-                  message: 'Password must be at least 6 characters',
+                  message: "Password must be at least 6 characters",
                 },
               })}
             />
           </div>
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Creating account...' : 'Create account'}
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Creating account..." : "Create account"}
           </Button>
         </form>
       </div>

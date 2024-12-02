@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { authService } from '../services/auth';
-import { useAuthStore } from '../stores/auth';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import { authService } from "../services/auth";
+import { useAuthStore } from "../stores/auth";
 
 interface LoginForm {
   email: string;
@@ -14,7 +14,7 @@ interface LoginForm {
 export default function Login() {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const {
     register,
     handleSubmit,
@@ -25,9 +25,9 @@ export default function Login() {
     try {
       const response = await authService.login(data);
       login(response.token, response.user);
-      navigate('/');
+      navigate("/");
     } catch (err) {
-      setError('Invalid email or password');
+      setError("Invalid email or password");
     }
   };
 
@@ -50,22 +50,24 @@ export default function Login() {
               type="email"
               placeholder="Email address"
               error={errors.email?.message}
-              {...register('email', { required: 'Email is required' })}
+              {...register("email", { required: "Email is required" })}
             />
             <Input
               type="password"
               placeholder="Password"
               error={errors.password?.message}
-              {...register('password', { required: 'Password is required' })}
+              {...register("password", { required: "Password is required" })}
             />
           </div>
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Signing in...' : 'Sign in'}
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Signing in..." : "Sign in"}
           </Button>
+          <div className="text-sm text-center mt-4">
+            Don't have an account?{" "}
+            <Link to="/register" className="text-blue-600 hover:text-blue-800">
+              Create one
+            </Link>
+          </div>
         </form>
       </div>
     </div>

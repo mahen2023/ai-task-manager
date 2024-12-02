@@ -5,17 +5,32 @@ const User = require("../models/User");
 const generateToken = (email) => jwt.sign({ email }, process.env.JWT_SECRET || "your_secret_key", { expiresIn: "1h" });
 
 exports.register = async (req, res) => {
-  const { email, password, name } = req.body;
+  const { email, password, name, role } = req.body;
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: "User already exists." });
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const newUser = new User({ name, email, passwordHash });
+    // const newUser = new User({ name, email, passwordHash, role });
+      // Set default role to 'USER' if none is provided
+    const newUser = new User({
+          name,
+          email,
+          passwordHash,
+          role: role || 'USER', // Default to 'USER'
+    });
     await newUser.save();
 
     const token = generateToken(email);
-    res.status(201).json({ token, user: {id: user._id, email: user.email, name: user.name, role:user.role} });
+    res.status(201).json({
+      token,
+      user: {
+        id: newUser._id,
+        email: newUser.email,
+        name: newUser.name,
+        role: newUser.role,
+      },
+    });
   } catch (err) {
     console.error("Error during registration:", err);
     res.status(500).json({ message: "Server error." });
