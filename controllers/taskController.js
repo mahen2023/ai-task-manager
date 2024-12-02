@@ -1,10 +1,45 @@
 const Task = require('../models/Task');
 
+// // Get all tasks
+// exports.getTasks = async (req, res) => {
+//   try {
+//     const tasks = await Task.find();
+//     res.status(200).json(tasks);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
+// // Get a single task by ID
+// exports.getTaskById = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const task = await Task.findById(id);
+//     if (!task) {
+//       return res.status(404).json({ error: 'Task not found' });
+//     }
+//     res.status(200).json(task);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
 // Get all tasks
 exports.getTasks = async (req, res) => {
   try {
     const tasks = await Task.find();
-    res.status(200).json(tasks);
+    // Map tasks to include id and exclude _id
+    const formattedTasks = tasks.map(task => ({
+      id: task._id,
+      title: task.title,
+      description: task.description,
+      dueDate: task.dueDate,
+      status: task.status,
+      userId: task.userId,
+      createdAt: task.createdAt,
+      updatedAt: task.updatedAt,
+    }));
+    res.status(200).json(formattedTasks);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -18,11 +53,23 @@ exports.getTaskById = async (req, res) => {
     if (!task) {
       return res.status(404).json({ error: 'Task not found' });
     }
-    res.status(200).json(task);
+    // Format the task to include id and exclude _id
+    const formattedTask = {
+      id: task._id,
+      title: task.title,
+      description: task.description,
+      dueDate: task.dueDate,
+      status: task.status,
+      userId: task.userId,
+      createdAt: task.createdAt,
+      updatedAt: task.updatedAt,
+    };
+    res.status(200).json(formattedTask);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 // Create a new task
 exports.createTask = async (req, res) => {

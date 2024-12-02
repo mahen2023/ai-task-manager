@@ -62,31 +62,31 @@
 //     }
 //   },
 
-//   async summarizeTaskDescription(description: string): Promise<string> {
-//     try {
-//       const openai = getOpenAIInstance();
-//       const completion = await openai.chat.completions.create({
-//         messages: [
-//           {
-//             role: 'system',
-//             content:
-//               'You are a helpful assistant that summarizes task descriptions concisely.',
-//           },
-//           {
-//             role: 'user',
-//             content: `Please summarize this task description in a concise way: ${description}`,
-//           },
-//         ],
-//         model: 'gpt-3.5-turbo',
-//         max_tokens: 100,
-//       });
+  // async summarizeTaskDescription(description: string): Promise<string> {
+  //   try {
+  //     const openai = getOpenAIInstance();
+  //     const completion = await openai.chat.completions.create({
+  //       messages: [
+  //         {
+  //           role: 'system',
+  //           content:
+  //             'You are a helpful assistant that summarizes task descriptions concisely.',
+  //         },
+  //         {
+  //           role: 'user',
+  //           content: `Please summarize this task description in a concise way: ${description}`,
+  //         },
+  //       ],
+  //       model: 'gpt-3.5-turbo',
+  //       max_tokens: 100,
+  //     });
 
-//       return completion.choices[0].message.content || '';
-//     } catch (error) {
-//       console.error('Error summarizing task description:', error);
-//       throw new Error('Failed to summarize task description. Please try again.');
-//     }
-//   },
+  //     return completion.choices[0].message.content || '';
+  //   } catch (error) {
+  //     console.error('Error summarizing task description:', error);
+  //     throw new Error('Failed to summarize task description. Please try again.');
+  //   }
+  // },
 
 //   async processNaturalLanguageCommand(
 //     command: string
@@ -271,6 +271,31 @@ export const aiService = {
     } catch (error) {
       console.error('Error processing natural language command:', error);
       throw new Error('Failed to process command. Please try again.');
+    }
+  },
+  async summarizeTaskDescription(description: string): Promise<string> {
+    try {
+      const openai = getOpenAIInstance();
+      const completion = await openai.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You are a helpful assistant that summarizes task descriptions concisely.',
+          },
+          {
+            role: 'user',
+            content: `Please summarize this task description in a concise way: ${description}`,
+          },
+        ],
+        model: 'gpt-3.5-turbo',
+        max_tokens: 100,
+      });
+
+      return completion.choices[0].message.content || '';
+    } catch (error) {
+      console.error('Error summarizing task description:', error);
+      throw new Error('Failed to summarize task description. Please try again.');
     }
   },
 };

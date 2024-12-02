@@ -1,21 +1,29 @@
-import { format } from 'date-fns';
-import { Pencil, Trash2 } from 'lucide-react';
-import { Button } from '../ui/Button';
-import type { Task } from '../../types/task';
+import { format } from "date-fns";
+import { Pencil, Trash2, RefreshCcw } from "lucide-react";
+import { Button } from "../ui/Button";
+import type { Task } from "../../types/task";
 
-interface TaskCardProps {
+export interface TaskCardProps {
   task: Task;
   onEdit: (task: Task) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
+  onSummarize: () => Promise<void>;
+  isSummarizing: boolean;
 }
 
 const statusColors = {
-  PENDING: 'bg-yellow-100 text-yellow-800',
-  IN_PROGRESS: 'bg-blue-100 text-blue-800',
-  COMPLETED: 'bg-green-100 text-green-800',
+  PENDING: "bg-yellow-100 text-yellow-800",
+  IN_PROGRESS: "bg-blue-100 text-blue-800",
+  COMPLETED: "bg-green-100 text-green-800",
 };
 
-export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
+export function TaskCard({
+  task,
+  onEdit,
+  onDelete,
+  onSummarize,
+  isSummarizing,
+}: TaskCardProps) {
   return (
     <div className="bg-white rounded-lg shadow p-6 space-y-4">
       <div className="flex justify-between items-start">
@@ -43,13 +51,30 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
             statusColors[task.status]
           }`}
         >
-          {task.status.replace('_', ' ')}
+          {task.status.replace("_", " ")}
         </span>
         {task.dueDate && (
           <span className="text-sm text-gray-500">
-            Due: {format(new Date(task.dueDate), 'MMM d, yyyy')}
+            Due: {format(new Date(task.dueDate), "MMM d, yyyy")}
           </span>
         )}
+      </div>
+      <div className="flex justify-end">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onSummarize}
+          disabled={isSummarizing}
+        >
+          {isSummarizing ? (
+            <div className="flex items-center space-x-2">
+              <RefreshCcw className="animate-spin h-4 w-4" />
+              <span>Summarizing...</span>
+            </div>
+          ) : (
+            "Summarize"
+          )}
+        </Button>
       </div>
     </div>
   );

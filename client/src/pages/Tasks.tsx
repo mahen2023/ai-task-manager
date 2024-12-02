@@ -6,6 +6,7 @@ import { TaskCard } from "../components/tasks/TaskCard";
 import { TaskForm } from "../components/tasks/TaskForm";
 import { AITaskAssistant } from "../components/ai/AITaskAssistant";
 import { taskService } from "../services/task";
+import { aiService } from "../services/ai"; // Import the AI service
 import type { Task, CreateTaskInput } from "../types/task";
 import { useAuthStore } from "../stores/auth";
 
@@ -13,6 +14,9 @@ export default function Tasks() {
   const queryClient = useQueryClient();
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [summarizingTaskId, setSummarizingTaskId] = useState<string | null>(
+    null
+  ); // Track task being summarized
   const { user } = useAuthStore();
   const userId = user?.id;
 
@@ -70,6 +74,24 @@ export default function Tasks() {
     }
   };
 
+  const handleSummarize = async (task: Task) => {
+    try {
+      setSummarizingTaskId(task.id); // Indicate the task being summarized
+      if (!task.description) {
+        throw new Error("Task description is undefined.");
+      }
+      const summary = await aiService.summarizeTaskDescription(
+        task.description
+      );
+      await updateMutation.mutateAsync({ id: task.id, description: summary });
+    } catch (error) {
+      console.error("Error summarizing task description:", error);
+      alert("Failed to summarize the task description. Please try again.");
+    } finally {
+      setSummarizingTaskId(null); // Reset after summarizing
+    }
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -110,6 +132,8 @@ export default function Tasks() {
             task={task}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onSummarize={() => handleSummarize(task)} // Pass summarization handler
+            isSummarizing={summarizingTaskId === task.id} // Indicate summarizing status
           />
         ))}
       </div>
