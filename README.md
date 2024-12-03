@@ -1,8 +1,8 @@
-# Project Name
+# AI Task Manager
 
 ## Overview
 
-This project is a full-stack application with a React-Vite frontend, a Laravel backend, and a MySQL database.
+This project is a full-stack application with a React-Vite frontend, a Node.js Express backend, and a MongoDB database.
 
 ## Table of Contents
 
@@ -16,9 +16,7 @@ This project is a full-stack application with a React-Vite frontend, a Laravel b
 
 - Node.js
 - npm or yarn
-- PHP
-- Composer
-- MySQL
+- MongoDB
 
 ### Frontend Setup
 
@@ -47,28 +45,16 @@ This project is a full-stack application with a React-Vite frontend, a Laravel b
    ```
 2. Install dependencies:
    ```sh
-   composer install
+   npm install
    ```
 3. Create a `.env` file in the `server` directory and configure your database settings:
    ```env
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=your_database_name
-   DB_USERNAME=your_database_user
-   DB_PASSWORD=your_database_password
+   MONGO_URI=mongodb://localhost:27017/your_database_name
+   JWT_SECRET=your_jwt_secret
    ```
-4. Generate an application key:
+4. Start the Node.js Express server:
    ```sh
-   php artisan key:generate
-   ```
-5. Run database migrations:
-   ```sh
-   php artisan migrate
-   ```
-6. Start the Laravel development server:
-   ```sh
-   php artisan serve
+   npm start
    ```
 
 ## Deployment Guides
@@ -84,11 +70,7 @@ This project is a full-stack application with a React-Vite frontend, a Laravel b
 ### Backend Deployment
 
 1. Set up your production environment variables in the `.env` file.
-2. Run database migrations:
-   ```sh
-   php artisan migrate --force
-   ```
-3. Deploy the Laravel application to your web server.
+2. Deploy the Node.js Express application to your web server.
 
 ## API Documentation
 
@@ -110,7 +92,7 @@ This project is a full-stack application with a React-Vite frontend, a Laravel b
     {
       "token": "jwt_token",
       "user": {
-        "id": 1,
+        "id": "1",
         "name": "John Doe",
         "email": "user@example.com"
       }
@@ -134,7 +116,7 @@ This project is a full-stack application with a React-Vite frontend, a Laravel b
     {
       "token": "jwt_token",
       "user": {
-        "id": 1,
+        "id": "1",
         "name": "John Doe",
         "email": "user@example.com"
       }
@@ -147,7 +129,7 @@ This project is a full-stack application with a React-Vite frontend, a Laravel b
   - **Response:**
     ```json
     {
-      "id": 1,
+      "id": "1",
       "name": "John Doe",
       "email": "user@example.com"
     }
@@ -163,7 +145,7 @@ This project is a full-stack application with a React-Vite frontend, a Laravel b
     ```json
     [
       {
-        "id": 1,
+        "id": "1",
         "title": "Task 1",
         "description": "Description for task 1"
       },
@@ -185,7 +167,7 @@ This project is a full-stack application with a React-Vite frontend, a Laravel b
   - **Response:**
     ```json
     {
-      "id": 1,
+      "id": "1",
       "title": "New Task",
       "description": "Description for new task"
     }
@@ -205,7 +187,7 @@ This project is a full-stack application with a React-Vite frontend, a Laravel b
   - **Response:**
     ```json
     {
-      "id": 1,
+      "id": "1",
       "title": "Updated Task",
       "description": "Updated description for task"
     }
@@ -225,7 +207,7 @@ This project is a full-stack application with a React-Vite frontend, a Laravel b
     ```json
     [
       {
-        "id": 1,
+        "id": "1",
         "name": "John Doe",
         "email": "user@example.com"
       },
@@ -248,7 +230,7 @@ This project is a full-stack application with a React-Vite frontend, a Laravel b
   - **Response:**
     ```json
     {
-      "id": 1,
+      "id": "1",
       "name": "New User",
       "email": "newuser@example.com"
     }
@@ -268,7 +250,7 @@ This project is a full-stack application with a React-Vite frontend, a Laravel b
   - **Response:**
     ```json
     {
-      "id": 1,
+      "id": "1",
       "name": "Updated User",
       "email": "updateduser@example.com"
     }
