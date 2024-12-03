@@ -33,6 +33,7 @@ export default function Tasks() {
     queryKey: ["tasks"],
     queryFn: taskService.getTasks,
   });
+  const [searchQuery, setSearchQuery] = useState("");
 
   const createMutation = useMutation({
     mutationFn: taskService.createTask,
@@ -106,8 +107,13 @@ export default function Tasks() {
   }
 
   const filteredTasks = tasks.filter((task) => {
-    if (filter === "all") return true;
-    return task.status.toLowerCase() === filter;
+    const matchesFilter =
+      filter === "all" || task.status.toLowerCase() === filter;
+    const matchesSearch = task.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    return matchesFilter && matchesSearch;
   });
 
   return (
@@ -126,6 +132,15 @@ export default function Tasks() {
           </div>
 
           <div className="flex items-center justify-between gap-4">
+            <div>
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="p-2 text-sm border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
             <div className="flex items-center bg-white rounded-lg shadow-sm border border-gray-200 p-1">
               <Button
                 variant={filter === "all" ? "default" : "ghost"}

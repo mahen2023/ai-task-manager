@@ -1,54 +1,5 @@
-// // controllers/userController.js
-// const User = require('../models/User');
-
-// // Get all users
-// exports.getUsers = async (req, res) => {
-//   try {
-//     const users = await User.find();
-//     res.status(200).json(users);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-// // Update a user
-// exports.updateUser = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-
-//     const updatedUser = await User.findByIdAndUpdate(
-//       id,
-//       { ...req.body, updatedAt: new Date() }, // Update `updatedAt` timestamp
-//       { new: true } // Return the updated user document
-//     );
-
-//     if (!updatedUser) {
-//       return res.status(404).json({ error: 'User not found' });
-//     }
-
-//     res.status(200).json(updatedUser);
-//   } catch (err) {
-//     res.status(400).json({ error: err.message });
-//   }
-// };
-
-// // Delete a user
-// exports.deleteUser = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-
-//     const deletedUser = await User.findByIdAndDelete(id);
-//     if (!deletedUser) {
-//       return res.status(404).json({ error: 'User not found' });
-//     }
-
-//     res.status(204).send(); // No content response
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
 const User = require('../models/User');
+const bcrypt = require("bcryptjs");
 
 // Helper function to transform user objects
 const transformUser = (user) => {
@@ -103,6 +54,43 @@ exports.deleteUser = async (req, res) => {
     res.status(204).send(); // No content response
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+exports.createUser = async (req, res) => {
+  try {
+    const { email, name, password, role  } = req.body;
+
+    // Validate required fields
+    if (!email || !name || !password || !role) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: 'User already exists' });
+    }
+
+    // Hash the password
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Create and save the new user
+    const user = new User({
+      email,
+      name,
+      passwordHash,
+      role,
+    });
+
+    await user.save();
+
+    // Respond with the created user (excluding the password)
+    const { password: _, ...userData } = user.toObject();
+    res.status(201).json(userData);
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 

@@ -12,3 +12,10 @@ export interface UpdateUserInput {
   role?: 'ADMIN' | 'USER';
   name?: string;
 }
+
+export interface CreateUserInput {
+  email: string;
+  name: string;
+  password: string;
+  role: 'ADMIN' | 'USER'; // Adding usertype field to specify the role
+}
