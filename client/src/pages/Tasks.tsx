@@ -269,7 +269,7 @@ export default function Tasks() {
       </div>
 
       {showChatbot && (
-        <div className="fixed right-0 top-16 bottom-0 w-[400px] border-l border-gray-200 bg-white shadow-lg">
+        <div className="fixed right-0  bottom-0 w-[400px] border-l border-gray-200 bg-white shadow-lg">
           <Chatbot
             onTaskCreate={async (task: CreateTaskInput) => {
               await createMutation.mutateAsync(task);
