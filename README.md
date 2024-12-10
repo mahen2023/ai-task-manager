@@ -72,6 +72,19 @@ This project is a full-stack application with a React-Vite frontend, a Node.js E
 1. Set up your production environment variables in the `.env` file.
 2. Deploy the Node.js Express application to your web server.
 
+### To Build and Run MonoRepo
+
+1. Build Backend and Frontend
+
+   ```sh
+   npm run build
+   ```
+
+2. Start the Server
+   ```sh
+   npm start
+   ```
+
 ## API Documentation
 
 ### Authentication
